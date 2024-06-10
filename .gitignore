@@ -34,5 +34,6 @@ coverage
 *.jepg
 *.gif
 *.svg
+*.jpeg
 images/*
 .idea/
