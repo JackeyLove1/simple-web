@@ -1,0 +1,363 @@
+body {
+    font: 14px / 1.5 "Microsoft Yahei", "Hiragino Sans GB", "Heiti SC", "WenQuanYi Micro Hei", sans-serif;
+    color: #333;
+    background-color: #f3f5f7;
+}
+
+
+.wrapper {
+    width: 1200px;
+    display: flex;
+    margin: 0 auto;
+}
+
+.header {
+    background-color: #fff;
+    padding-top: 29px;
+}
+
+.logo {
+    font-size: 0;
+    background-image: url("../images/logo.png");
+    width: 195px;
+    height: 41px;
+}
+
+.nav {
+    width: 272px;
+    height: 41px;
+    margin-left: 102px;
+}
+
+.nav ul {
+    display: flex;
+    width: 260px;
+    justify-content: space-between;
+}
+
+.nav ul li {
+    margin-top: 5px;
+}
+
+.nav ul li a {
+    font-size: 19px;
+    line-height: 27px;
+    padding: 6px 8px;
+}
+
+.nav ul li a:hover,
+.nav ul .active {
+    border-bottom: 2px solid #00a4ff;
+}
+
+.search {
+    margin-left: 60px;
+    display: flex;
+    background-color: #f3f5f7;
+    width: 412px;
+    height: 40px;
+    border-radius: 20px;
+    padding-left: 19px;
+    padding-right: 12px;
+}
+
+.search input {
+    flex: 1;
+    outline: none;
+    border: 0;
+    background-color: transparent;
+}
+
+.header .search a {
+    background-image: url("../images/search.png");
+    width: 16px;
+    height: 16px;
+    align-self: center;
+}
+
+.user {
+    margin-left: 32px;
+    margin-top: 4px;
+}
+
+.user a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.user a span {
+    font-size: 16px;
+    margin-left: 10px;
+}
+
+.banner {
+    width: 100%;
+    height: 420px;
+    background-color: #0092cb;
+    margin-top: 29px;
+}
+
+.banner .left {
+    width: 191px;
+    height: 420px;
+    background-color: rgba(0, 0, 0, 0.42);
+    padding: 3px 20px;
+}
+
+.banner .left ul {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.banner .left ul li a {
+    font-size: 16px;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-content: center;
+}
+
+.banner .left ul li a i {
+    align-self: center;
+}
+
+.banner .left ul li a:hover {
+    color: #00a4ff;
+}
+
+.banner .wrapper {
+    background-image: url("../uploads/banner.png");
+    display: flex;
+    justify-content: space-between;
+}
+
+
+.banner .right {
+    width: 218px;
+    margin-top: 60px;
+    height: 305px;
+    background-color: #209dd5;
+    border-radius: 10px;
+}
+
+.banner .right h3 {
+    margin-left: 14px;
+    color: white;
+    font-size: 15px;
+    line-height: 48px;
+    font-weight: 400;
+}
+
+.banner .right .content {
+    background-color: white;
+    border-radius: 10px;
+    width: 100%;
+    height: 257px;
+    padding: 14px;
+}
+
+.banner .right .content .item {
+    margin-bottom: 12px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.banner .right .content .item h4 {
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.banner .right .content .item div {
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 400;
+    margin-bottom: 8px;
+}
+
+.banner .right .content .item div span {
+    color: #00a4ff;
+}
+
+.banner .right .content .item div strong {
+    color: #7d7d7d;
+    font-weight: 400;
+}
+
+.banner .right .content a {
+    display: block;
+    width: 190px;
+    height: 32px;
+    background-color: #00a4ff;
+    border-radius: 15px;
+    text-align: center;
+    font-size: 14px;
+    color: white;
+    line-height: 32px;
+}
+
+.recommend {
+    margin-top: 11px;
+    padding: 0 20px;
+    height: 60px;
+    box-shadow: 0px 1px 2px 0px rgba(211, 211, 211, 0.5);
+    line-height: 60px;
+}
+
+.recommend ul {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.recommend ul li a {
+    font: 14px / 1.5 "Microsoft Yahei", "Hiragino Sans GB", "Heiti SC", "WenQuanYi Micro Hei", sans-serif;
+    padding: 0 24px;
+    border-right: 1px solid #e0e0e0;
+    font-size: 18px;
+}
+
+.recommend ul li:last-child a {
+    border-right: 0;
+}
+
+.recommend h3 {
+    font-size: 18px;
+    color: #00a4ff;
+    font-weight: 400;
+}
+
+.recommend .modify {
+    font-size: 18px;
+    color: #00a4ff;
+    font-weight: 400;
+}
+
+.course{
+    margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.hd{
+    display: flex;
+    justify-content: space-between;
+    align-content: center;
+    align-items: center;
+    width: 100%;
+    height: 60px;
+    line-height: 60px;
+}
+
+.hd h3{
+    font-size: 21px;
+    font-weight: 400;
+}
+
+.hd .more{
+    font-size: 14px;
+    color: #999;
+    display: flex;
+    align-items: center;
+}
+
+.bd {
+    width: 100%;
+}
+
+.bd ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-content: space-between;
+    padding: 0;
+    margin-top: 5px;
+}
+
+
+.bd ul li a{
+    display: block;
+    margin-bottom: 14px;
+    width: 228px;
+    height: 271px;
+    box-shadow: 0px 1px 2px 0px rgba(211, 211, 211, 0.5);
+}
+
+.bd ul li  a .text{
+    padding: 20px;
+    height: 115px;
+    background-color: #fff;
+}
+.bd ul li a .text h4{
+    margin-bottom: 13px;
+    height: 40px;
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 400;
+}
+
+.bd ul li a .text p{
+    font-size: 14px;
+    line-height: 20px;
+    color: #999;
+}
+
+.bd ul li a .text p span{
+    color: #fa6400;
+}
+
+.hd .more i{
+    margin-left: 5px;
+}
+
+.footer{
+    margin-top: 60px;
+    height: 273px;
+    background-color: white;
+    padding-top: 60px;
+}
+
+.footer .left{
+    width: 440px;
+    display: flex;
+    flex-direction: column;
+}
+
+.footer .left p{
+    margin-top: 24px;
+    margin-bottom: 14px;
+    font-size: 12px;
+    line-height: 17px;
+    color: #666;
+}
+
+.footer .left .download {
+    display: block;
+    width: 120px;
+    height: 36px;
+    border: 1px solid #00a4ff;
+    text-align: center;
+    line-height: 34px;
+    font-size: 16px;
+    color: #00a4ff;
+}
+
+.footer .right{
+    display: flex ;
+    justify-content: space-between;
+}
+
+.footer .right dt {
+    margin-bottom: 12px;
+    font-size: 16px;
+    line-height: 23px;
+}
+
+.footer .right dl{
+    margin-left: 130px;
+}
