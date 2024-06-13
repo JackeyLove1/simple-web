@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="js/axios.min.js"></script>
+</head>
+<body>
+<p class="my-p"></p>
+
+<h1> Province </h1>
+<p class="provice"></p>
+<script lang="js">
+    axios({
+        url: "https://hmajax.itheima.net/api/province"
+    }).then(result => {
+        console.log(result.data.list.join('<br>'))
+        document.querySelector(".my-p").innerHTML = result.data.list.join('<br>')
+    })
+
+    axios({
+        url: "：http://hmajax.itheima.net/api/city",
+        params: {
+            pname: "广东省"
+        }
+    }).then(result => {
+        document.querySelector(".provice").innerHTML = result.data
+    })
+</script>
+</body>
+</html>
