@@ -35,5 +35,6 @@ coverage
 *.gif
 *.svg
 *.jpeg
-images/*
+*.webp
+images/
 .idea/
