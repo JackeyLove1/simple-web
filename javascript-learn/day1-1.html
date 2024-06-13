@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>js1</title>
+    <style>
+        body {
+            background: url(./images/desktop_1.jpg) no-repeat top center/cover;
+        }
+    </style>
+</head>
+<body>
+
+<!--<script lang="js">
+    document.write("hello world")
+</script>-->
+<script src="./day1.js"></script>
+<script>
+    function getRandom(N, M) {
+        return Math.floor(Math.random() * (M - N + 1) + N)
+    }
+
+    const random = getRandom(1, 10)
+    document.body.style.backgroundImage = `url(./images/desktop_${random}.jpg)`
+</script>
+</body>
+</html>
