@@ -1,10 +1,13 @@
 <script setup>
-import router from "@/router/index.js";
+
+import {useRouter} from "vue-router";
+const router = useRouter();
+
 </script>
 
 <template>
   <div class="user">
-    <header>
+    <header @click="router.push('/login')">
       <div class="pic">
         <img src="@/assets/default-avatar.png" alt="#">
       </div>
