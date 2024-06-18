@@ -100,7 +100,7 @@ onMounted(async () => {
                 <img :src="item.user?.avatar_url" alt="">
                 <div> {{ item.user?.nick_name }}</div>
               </div>
-              <div class="comments-item-content">
+              <div class="comments-item-content text-ellipsis-2">
                 {{ item.content }}
               </div>
               <div class="comments-time">
