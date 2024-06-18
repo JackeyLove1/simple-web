@@ -12,6 +12,9 @@
     "axios": "^1.7.2",
     "less": "^4.2.0",
     "pinia": "^2.1.7",
+    "postcss": "^8.4.38",
+    "postcss-px-to-viewport": "^1.1.1",
+    "postcss-pxtorem": "^6.1.0",
     "vant": "^4.9.1",
     "vue": "^3.4.21",
     "vue-router": "^4.3.3"
