@@ -309,7 +309,8 @@ footer {
     color: #fff;
     font-size: 3.8vw;
   }
-
-  
+  .buy-btn{
+    background-color: #fe5630;
+  }
 }
 </style>
