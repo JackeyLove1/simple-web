@@ -7,3 +7,7 @@ export const getHomeData = () => {
         }
     })
 }
+
+export const getCategoryData = () => {
+    return request.get("/category/list", {})
+}

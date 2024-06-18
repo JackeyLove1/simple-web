@@ -21,18 +21,16 @@ instance.interceptors.request.use(
             duration: 0,
             loadingType: "spinner",
             onOpened: () => {
-                console.log("开启loading");
             },
             onClose: () => {
-                console.log("关闭loading");
             }
         })
 
         const userStore = useUserStore()
-        const token = userStore.getUserInfo().token
+        const token = userStore.getUserInfo()?.token
         if (token) {
-            config.headers.Authorization = token
-            console.log(config.headers.Authorization)
+            config.headers['Access-Token'] = token
+            console.log("token: ", config.headers['Access-Token'])
             config.headers.platform = 'h5'
         }
         return config

@@ -1,11 +1,10 @@
 <script setup>
-
 </script>
 
 <template>
-  $END$
+<h1> cart </h1>
 </template>
 
-<style scoped>
+<style scoped lang="less">
 
 </style>

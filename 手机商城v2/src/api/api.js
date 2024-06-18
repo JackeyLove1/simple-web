@@ -36,3 +36,24 @@ export const codeLogin = (mobile, smsCode) => {
         }
     })
 }
+
+export const getUserInfoDetail = () => {
+    return request.get('/user/info', {})
+}
+
+export const getGoodDetail = (goodsId) => {
+    return request.get('/goods/detail', {
+        params: {
+            goodsId
+        }
+    })
+}
+
+export const getGoodComments = (goodsId, limit) => {
+    return request.get('/comment/listRows', {
+        params: {
+            goodsId,
+            limit
+        }
+    })
+}

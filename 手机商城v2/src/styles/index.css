@@ -20,6 +20,7 @@ body {
   margin: 0;
   padding: 0;
   list-style: none;
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, Segoe UI, Arial, Roboto, 'PingFang SC', miui, 'Hiragino Sans GB', 'Microsoft Yahei', sans-serif;
 }
 #app {
   width: 100%;

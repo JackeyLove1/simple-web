@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  $END$
+<h1>prodetail</h1>
 </template>
 
 <style scoped>

@@ -4,9 +4,8 @@ import {piniaInstance} from '@/stores/index.js'
 import 'vant/lib/index.css';
 import '@/styles/index.css'
 import Vant from 'vant'
-
-import App from './App.vue'
 import router from './router'
+import App from './App.vue'
 
 const app = createApp(App)
 

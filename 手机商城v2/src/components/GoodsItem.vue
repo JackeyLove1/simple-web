@@ -1,5 +1,6 @@
 <script setup>
 import {computed} from "vue";
+import {useRouter} from "vue-router";
 
 const props = defineProps(
     {
@@ -16,17 +17,19 @@ const desc = computed(() => {
   return `已售${props.goods_sales}件`
 })
 
+const router = useRouter();
 </script>
 
 <template>
-
-  <van-card
-      :price="goods_price_min"
-      :origin-price="goods_price_max"
-      :title="goods_name"
-      :thumb="goods_image"
-      :desc="desc"
-  />
+  <div v-if="good_id" @click="router.push(`/prodetail/${good_id}`)">
+    <van-card
+        :price="goods_price_min"
+        :origin-price="goods_price_max"
+        :title="goods_name"
+        :thumb="goods_image"
+        :desc="desc"
+    />
+  </div>
 
 </template>
 

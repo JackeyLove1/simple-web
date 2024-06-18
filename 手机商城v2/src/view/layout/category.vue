@@ -10,14 +10,14 @@ const router = useRouter()
 
 const categoryList = ref([])
 
-onBeforeMount(async () => {
+onMounted(async () => {
   const {data: {list}} = await getCategoryData()
   console.log("list: ", list)
   categoryList.value = list
 })
 
 const navList = computed(() => {
-  return categoryList.value[activeIndex.value].children
+  return categoryList.value[activeIndex.value]?.children
 })
 
 </script>
@@ -32,7 +32,6 @@ const navList = computed(() => {
     <div class="search-bar">
       <van-search
           @clickInput="router.push('/search')"
-          v-model="searchValue"
           background="#fff"
           shape="round"
           placeholder="搜索你要找的商品"/>

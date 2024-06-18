@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  $END$
+<h1>login</h1>
 </template>
 
 <style scoped>

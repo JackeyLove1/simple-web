@@ -1,4 +1,5 @@
-import {createMemoryHistory, createRouter, createWebHashHistory} from 'vue-router'
+import {createRouter, createWebHashHistory} from 'vue-router'
+import {useUserStore} from "@/stores/modules/user.js";
 
 
 const routes = [
@@ -35,12 +36,32 @@ const routes = [
     {
         path: '/login',
         component: () => import('@/view/login/index.vue')
-    }
+    },
+    {
+        path: '/prodetail/:id',
+        component: () => import('@/view/prodetail/index.vue')
+    },
 ]
 
 const router = createRouter({
     history: createWebHashHistory(),
     routes,
+})
+
+
+const authUrls = ['/pay', '/myorder']
+router.beforeEach((to, from, next) => {
+    if (!authUrls.includes(to.path)) {
+        next();
+        return;
+    }
+    const userStore = useUserStore()
+    const token = userStore.getUserInfo()?.token
+    if (token) {
+        next();
+    } else {
+        next('/login');
+    }
 })
 
 export default router

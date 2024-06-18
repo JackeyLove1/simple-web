@@ -9,7 +9,7 @@ const navList = ref([])
 const productList = ref([])
 const router = useRouter()
 
-onBeforeMount(async () => {
+onMounted(async () => {
   const {data: {pageData}} = await getHomeData();
   console.log("page data: ", pageData)
   bannerList.value = pageData.items[1].data
@@ -58,7 +58,7 @@ onBeforeMount(async () => {
     </main>
 
     <!-- nav -->
-    <div class="nav-grid">
+    <div class="nav-grid" @click="router.push('/category')">
       <van-grid square :border="false" :column-num="5" :icon-size="40">
         <van-grid-item
             v-for="(item, index) in navList"

@@ -1,30 +1,79 @@
 <script setup>
 
 import {useRouter} from "vue-router";
+import {useUserStore} from "@/stores/modules/user.js";
+import {computed, onBeforeMount, ref} from "vue";
+import {getUserInfoDetail} from "@/api/api.js";
+import {showConfirmDialog} from "vant";
+
 const router = useRouter();
+const userStore = useUserStore()
+
+const detail = ref({})
+
+async function logout() {
+  showConfirmDialog({
+    title: '温馨提示',
+    message: '你确认要退出么',
+  }).then(() => {
+    userStore.clearUserInfo()
+    isLogin.value = false
+  }).catch(() => {
+  })
+}
+
+const isLogin = computed(() => {
+  return userStore.getUserInfo()?.token
+})
+
+onBeforeMount(async () => {
+  if (isLogin.value) {
+    const {data: {userInfo}} = await getUserInfoDetail();
+    detail.value = userInfo
+    console.log("userinfo: ", userInfo)
+  }
+})
 
 </script>
 
 <template>
   <div class="user">
     <header @click="router.push('/login')">
-      <div class="pic">
-        <img src="@/assets/default-avatar.png" alt="#">
+      <div class="page" v-if="isLogin">
+        <div class="pic">
+          <img :src="detail.avatar_url" alt="#">
+        </div>
+        <div class="content">
+          <h3>{{ detail.nick_name }}</h3>
+          <div class="vip">
+            <van-icon name="diamond-o"/>
+            <span>普通会员</span>
+          </div>
+        </div>
       </div>
-      <div class="content">
-        <h3>未登录</h3>
-        <p>点击账号登录</p>
+      <div class="page" v-else>
+        <div class="pic">
+          <img src="@/assets/default-avatar.png" alt="#">
+        </div>
+        <div class="content">
+          <h3>未登录</h3>
+          <p>点击账号登录</p>
+        </div>
       </div>
     </header>
 
     <nav>
       <div class="block">
-        <div class="icon"><span>--</span></div>
+        <div class="icon">
+          {{ detail.balance || '--' }}
+        </div>
         <div class="name">账户余额</div>
       </div>
 
       <div class="block">
-        <div class="icon"><span>--</span></div>
+        <div class="icon">
+          --
+        </div>
         <div class="name">积分</div>
       </div>
 
@@ -119,11 +168,13 @@ const router = useRouter();
             <span class="name">退款/售后</span>
           </div>
 
-
         </div>
       </div>
-    </main>
 
+      <div class="logout" @click="logout">
+        退出登录
+      </div>
+    </main>
 
   </div>
 </template>
@@ -137,13 +188,30 @@ const router = useRouter();
 header {
   height: 138px;
   width: 100%;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
   background-image: url("@/assets/user-header2.png");
   background-position: 0 0;
   background-size: 100% 100%;
   background-repeat: no-repeat;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  .page {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    .vip {
+      display: inline-block;
+      background-color: #3c3c3c;
+      padding: 1vw 1.5vw;
+      border-radius: 1.5vw;
+      color: #e0d3b6;
+      font-size: 3.8vw;
+      margin-top: 6px;
+      font-weight: 500;
+    }
+  }
 
   .pic {
     width: 86px;
@@ -189,12 +257,17 @@ nav {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-items: center;
+  justify-content: center;
   color: #545454;
 
   .icon {
     width: 25px;
     height: 25px;
-    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
   }
 
   .name {
@@ -227,23 +300,38 @@ main {
     border-radius: 5px;
     padding: 10px 5px;
 
-    .title{
+    .title {
       margin-left: 10px;
     }
+
     .service-list {
       display: flex;
       flex-direction: row;
       flex-wrap: wrap;
       margin-bottom: 10px;
-      .service-item{
+
+      .service-item {
         width: 86px;
         margin-top: 24px;
-        .icon{
+
+        .icon {
           color: #ff3800;
         }
       }
     }
   }
+}
 
+.logout {
+  text-align: center;
+  width: 50%;
+  height: 30px;
+  border: 1px solid #dcdcdc;
+  margin: 20px auto auto;
+  line-height: 30px;
+  font-size: 15px;
+  border-radius: 8px;
+  color: #616161;
+  background-color: #fff;
 }
 </style>
