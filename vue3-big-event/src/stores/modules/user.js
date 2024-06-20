@@ -17,6 +17,7 @@ export const useUserStore = defineStore(
 
 
         const defaultUserObj = {
+            id: "",
             username: "",
             nickname: "",
             email: "",

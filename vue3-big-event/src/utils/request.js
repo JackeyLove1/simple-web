@@ -3,8 +3,6 @@ import {useUserStore} from "@/stores/index.js";
 import {ElMessage} from "element-plus";
 import {useRouter} from "vue-router";
 
-const router = useRouter()
-
 // todo(jackyfan): move it to config file
 const baseURL = 'http://big-event-vue-api-t.itheima.net'
 const instance = axios.create({
@@ -41,6 +39,7 @@ instance.interceptors.response.use(
     (error) => {
         if (error.response?.status === 401) {
             ElMessage.error('登录过期，请重新登录')
+            const router = useRouter()
             router.push('/login')
         }
 
