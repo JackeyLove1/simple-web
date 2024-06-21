@@ -35,17 +35,20 @@ async function handleAddArticle() {
   console.log("添加文章")
 }
 
-function handleSearch() {
+async function handleSearch() {
   console.log("搜索")
+  params.value.pagenum = 1
+  await getArticleList()
 }
 
-function handleReset() {
+async function handleReset() {
   params.value = {
     pagenum: 1,
     pagesize: 10,
     cate_id: '',
     state: '',
   }
+  await getArticleList()
 }
 
 watch(params, () => {
@@ -58,6 +61,17 @@ function onEditArticle(row) {
 
 function onDeleteArticle(row) {
   console.log("delete article: ", row)
+}
+
+const handleSizeChange = async (size) => {
+  params.value.pagenum = 1
+  params.value.pagesize = size
+  await getArticleList()
+}
+
+const handleCurrentChange = async (page) => {
+  params.value.pagenum = page
+  await getArticleList()
 }
 
 </script>
@@ -128,8 +142,19 @@ function onDeleteArticle(row) {
             >删除</el-button>
           </template>
         </el-table-column>
-
       </el-table>
+      <el-pagination
+          v-model:current-page="params.pagenum"
+          v-model:page-size="params.pagesize"
+          :page-sizes="[2, 3, 5, 10]"
+          :background="true"
+          :total="total"
+          layout="jumper, total, sizes, prev, pager, next"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          style="margin-top: 20px; justify-content: end"
+      >
+      </el-pagination>
     </template>
   </page-container>
 </template>

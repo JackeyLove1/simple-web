@@ -3,7 +3,7 @@ import {ref, watch} from "vue";
 import {artAddChannelService, artEditChannelService} from "@/api/article.js";
 import {ElMessage} from "element-plus";
 
-const dialogVisible = ref(true);
+const dialogVisible = ref(false);
 const formRef = ref()
 const formModel = ref({
   cate_name: '',
@@ -46,9 +46,7 @@ const handleSubmit = async () => {
 
 const open = (row) => {
   dialogVisible.value = true
-  if (row) {
-    formModel.value = {...row}
-  }
+  formModel.value = {...row}
 }
 
 defineExpose({
@@ -60,7 +58,9 @@ defineExpose({
 <template>
   <el-dialog
       :title="formModel.id ? '编辑分类' : '添加分类'"
-      v-model:visible="dialogVisible">
+      v-model="dialogVisible"
+      width="30%"
+  >
     <el-form
         ref="formRef"
         :model="formModel"
