@@ -71,10 +71,12 @@ const onScrollToLower = async () => {
   <CustomNavbar/>
 
   <scroll-view
+    enable-back-to-top
     refresher-enabled
     :refresher-triggered="isTriggered"
     @refresherrefresh="onRefreshTriggered"
     class="scroll-view"
+    @scrolltolower="onScrollToLower"
     scroll-y
   >
     <PageSkeleton v-if="isLoading"/>
@@ -89,14 +91,7 @@ const onScrollToLower = async () => {
       <HotPanel :list="hoList"/>
 
       <!-- 猜你喜欢 -->
-      <scroll-view
-        enable-back-to-top
-        @scrolltolower="onScrollToLower"
-        class="scroll-view"
-        scroll-y
-      >
-        <XtxGuess ref="guessLikeRef"/>
-      </scroll-view>
+      <XtxGuess ref="guessLikeRef"/>
     </template>
 
   </scroll-view>
