@@ -5,6 +5,7 @@ import type { CategoryTopItem } from '@/types/category'
 import type { BannerItem } from '@/types/home'
 import { onLoad } from '@dcloudio/uni-app'
 import { computed, ref } from 'vue'
+import PageSkeleton from "@/pages/category/PageSkeleton.vue";
 
 // 获取轮播图数据
 const bannerList = ref<BannerItem[]>([])
@@ -36,7 +37,7 @@ const subCategoryList = computed(() => {
 </script>
 
 <template>
-  <view class="viewport">
+  <view class="viewport" v-if="isFinish">
     <!-- 搜索框 -->
     <view class="search">
       <view class="input">
@@ -88,6 +89,9 @@ const subCategoryList = computed(() => {
         </view>
       </scroll-view>
     </view>
+  </view>
+  <view v-else>
+    <PageSkeleton />
   </view>
 </template>
 
