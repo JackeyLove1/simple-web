@@ -14,7 +14,7 @@
       "style": {
         "navigationStyle": "custom",
         "navigationBarTextStyle": "white",
-        "navigationBarTitleText": "首页"
+        "navigationBarTitleText": "练习"
       }
     },
     {
@@ -24,33 +24,9 @@
       }
     },
     {
-      "path": "pages/cart/cart",
-      "style": {
-        "navigationBarTitleText": "购物车"
-      }
-    },
-    {
-      "path": "pages/category/category",
-      "style": {
-        "navigationBarTitleText": "分类"
-      }
-    },
-    {
       "path": "pages/login/login",
       "style": {
         "navigationBarTitleText": "登录"
-      }
-    },
-    {
-      "path": "pages/hot/hot",
-      "style": {
-        "navigationBarTitleText": "热门好物"
-      }
-    },
-    {
-      "path": "pages/goods/goods",
-      "style": {
-        "navigationBarTitleText": "商品详情"
       }
     }
   ],
@@ -62,22 +38,10 @@
     "borderStyle": "white",
     "list": [
       {
-        "text": "首页",
+        "text": "练习",
         "pagePath": "pages/index/index",
         "iconPath": "static/tabs/home_default.png",
         "selectedIconPath": "static/tabs/home_selected.png"
-      },
-      {
-        "text": "分类",
-        "pagePath": "pages/category/category",
-        "iconPath": "static/tabs/category_default.png",
-        "selectedIconPath": "static/tabs/category_selected.png"
-      },
-      {
-        "text": "购物车",
-        "pagePath": "pages/cart/cart",
-        "iconPath": "static/tabs/cart_default.png",
-        "selectedIconPath": "static/tabs/cart_selected.png"
       },
       {
         "text": "我的",
@@ -137,7 +101,7 @@
       "van-rate": "/wxcomponents/vant-weapp/dist/rate/index",
       "van-collapse": "/wxcomponents/vant-weapp/dist/collapse/index",
       "van-collapse-item": "/wxcomponents/vant-weapp/dist/collapse-item/index",
-      "van-picker": "/wxcomponents/vant-weapp/dist/picker/index",
+      "van-picker": "/wxcomponents/vant-weapp/dist/picker/index"
     }
   }
 }

@@ -1,10 +1,259 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>扫雷游戏</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f0f0f0;
+        }
+        #game-container {
+            background-color: #fff;
+            border: 2px solid #999;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        #controls {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        #minefield {
+            display: grid;
+            grid-template-columns: repeat(var(--size), 30px);
+            gap: 1px;
+        }
+        .cell {
+            width: 30px;
+            height: 30px;
+            border: 1px solid #ccc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            cursor: pointer;
+            background-color: #ddd;
+        }
+        .cell.revealed {
+            background-color: #fff;
+        }
+        .cell.mine {
+            background-color: #f00;
+        }
+        .cell.flagged::after {
+            content: "🚩";
+        }
+        button {
+            padding: 5px 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        select {
+            padding: 5px;
+            font-size: 16px;
+        }
+    </style>
 </head>
 <body>
-$END$
+<div id="game-container">
+    <div id="controls">
+        <select id="difficulty">
+            <option value="easy">简单 (9x9, 10雷)</option>
+            <option value="medium">中等 (16x16, 40雷)</option>
+            <option value="hard">困难 (30x16, 99雷)</option>
+        </select>
+        <div id="timer">时间: 0s</div>
+        <button id="restart">重新开始</button>
+    </div>
+    <div id="minefield"></div>
+</div>
+
+<script>
+    const minefield = document.getElementById('minefield');
+    const difficultySelect = document.getElementById('difficulty');
+    const restartButton = document.getElementById('restart');
+    const timerDisplay = document.getElementById('timer');
+
+    let board = [];
+    let gameOver = false;
+    let firstClick = true;
+    let timer;
+    let time = 0;
+
+    const difficulties = {
+        easy: { size: 9, mines: 10 },
+        medium: { size: 16, mines: 40 },
+        hard: { size: 30, mines: 99, rows: 16 }
+    };
+
+    function initGame() {
+        const difficulty = difficulties[difficultySelect.value];
+        const size = difficulty.size;
+        const mines = difficulty.mines;
+        const rows = difficulty.rows || size;
+
+        gameOver = false;
+        firstClick = true;
+        clearInterval(timer);
+        time = 0;
+        timerDisplay.textContent = `时间: ${time}s`;
+
+        board = Array(rows).fill().map(() => Array(size).fill(0));
+        minefield.style.setProperty('--size', size);
+        minefield.innerHTML = '';
+
+        for (let y = 0; y < rows; y++) {
+            for (let x = 0; x < size; x++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.dataset.x = x;
+                cell.dataset.y = y;
+                cell.addEventListener('click', handleClick);
+                cell.addEventListener('contextmenu', handleRightClick);
+                minefield.appendChild(cell);
+            }
+        }
+    }
+
+    function startTimer() {
+        timer = setInterval(() => {
+            time++;
+            timerDisplay.textContent = `时间: ${time}s`;
+        }, 1000);
+    }
+
+    function placeMines(clickX, clickY) {
+        const difficulty = difficulties[difficultySelect.value];
+        const size = difficulty.size;
+        const mines = difficulty.mines;
+        const rows = difficulty.rows || size;
+
+        let placedMines = 0;
+        while (placedMines < mines) {
+            const x = Math.floor(Math.random() * size);
+            const y = Math.floor(Math.random() * rows);
+            if (board[y][x] !== -1 && (x !== clickX || y !== clickY)) {
+                board[y][x] = -1;
+                placedMines++;
+            }
+        }
+
+        for (let y = 0; y < rows; y++) {
+            for (let x = 0; x < size; x++) {
+                if (board[y][x] !== -1) {
+                    board[y][x] = countAdjacentMines(x, y);
+                }
+            }
+        }
+    }
+
+    function countAdjacentMines(x, y) {
+        let count = 0;
+        for (let dy = -1; dy <= 1; dy++) {
+            for (let dx = -1; dx <= 1; dx++) {
+                const ny = y + dy;
+                const nx = x + dx;
+                if (ny >= 0 && ny < board.length && nx >= 0 && nx < board[0].length) {
+                    if (board[ny][nx] === -1) count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    function handleClick(event) {
+        if (gameOver) return;
+
+        const x = parseInt(event.target.dataset.x);
+        const y = parseInt(event.target.dataset.y);
+
+        if (firstClick) {
+            firstClick = false;
+            placeMines(x, y);
+            startTimer();
+        }
+
+        revealCell(x, y);
+    }
+
+    function handleRightClick(event) {
+        event.preventDefault();
+        if (gameOver) return;
+
+        const cell = event.target;
+        cell.classList.toggle('flagged');
+    }
+
+    function revealCell(x, y) {
+        const cell = minefield.children[y * board[0].length + x];
+        if (cell.classList.contains('revealed') || cell.classList.contains('flagged')) return;
+
+        cell.classList.add('revealed');
+
+        if (board[y][x] === -1) {
+            gameOver = true;
+            cell.classList.add('mine');
+            cell.textContent = '💣';
+            revealAllMines();
+            clearInterval(timer);
+            alert('游戏结束!');
+        } else if (board[y][x] === 0) {
+            for (let dy = -1; dy <= 1; dy++) {
+                for (let dx = -1; dx <= 1; dx++) {
+                    const ny = y + dy;
+                    const nx = x + dx;
+                    if (ny >= 0 && ny < board.length && nx >= 0 && nx < board[0].length) {
+                        revealCell(nx, ny);
+                    }
+                }
+            }
+        } else {
+            cell.textContent = board[y][x];
+            cell.style.color = getNumberColor(board[y][x]);
+        }
+
+        checkWin();
+    }
+
+    function getNumberColor(number) {
+        const colors = ['#0000FF', '#008000', '#FF0000', '#000080', '#800000', '#008080', '#000000', '#808080'];
+        return colors[number - 1] || '#000000';
+    }
+
+    function revealAllMines() {
+        for (let y = 0; y < board.length; y++) {
+            for (let x = 0; x < board[0].length; x++) {
+                if (board[y][x] === -1) {
+                    const cell = minefield.children[y * board[0].length + x];
+                    cell.classList.add('revealed', 'mine');
+                    cell.textContent = '💣';
+                }
+            }
+        }
+    }
+
+    function checkWin() {
+        const revealedCount = minefield.querySelectorAll('.revealed').length;
+        const totalCells = board.length * board[0].length;
+        const mineCount = difficulties[difficultySelect.value].mines;
+
+        if (revealedCount === totalCells - mineCount) {
+            gameOver = true;
+            clearInterval(timer);
+            alert('恭喜你赢了!');
+        }
+    }
+
+    difficultySelect.addEventListener('change', initGame);
+    restartButton.addEventListener('click', initGame);
+
+    initGame();
+</script>
 </body>
 </html>

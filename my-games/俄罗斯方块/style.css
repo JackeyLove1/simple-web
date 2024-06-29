@@ -3,16 +3,25 @@ body {
   font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif;
 }
 
+#stats {
+  float: right;
+  position: relative;
+  background-color: #c4d6a7;
+  width: 70px;
+  height: 448px;
+  margin: 10px auto;
+  border: 2px solid #303a21;
+  display: flex;
+  flex-direction: column;
+}
+
 .labels {
-  margin: auto;
-  margin-top: 10px;
   text-align: center;
   text-transform: uppercase;
   font-size: 14px;
   font-weight: bold;
   color: #303a21;
   word-wrap: break-word;
-  margin-bottom: 50px;
 }
 
 .frame {
@@ -20,6 +29,7 @@ body {
   padding: 5px 0px;
   width: 56px;
   border: 2px solid #303a21;
+  text-align: center;
 }
 
 .btn {
@@ -70,14 +80,12 @@ body {
   border: 2px solid #303a21;
 }
 
-#stats {
-  float: right;
+#tileContainer {
   position: relative;
-  background-color: #c4d6a7;
-  width: 70px;
-  height: 448px;
-  margin: 10px auto;
-  border: 2px solid #303a21;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 #banner {
@@ -129,6 +137,26 @@ body {
 
 .inner-inner-tile {
   position: absolute;
+  background-color: #303a21;
+  width: 8px;
+  height: 8px;
+  margin: 3px;
+}
+
+.bg-empty {
+  background-color: #c4d6a7;
+  width: 28px;
+  height: 28px;
+  opacity: 0.2;
+}
+.bg-empty .bg-inner-tile {
+  background-color: #c4d6a7;
+  border: 4px solid #303a21;
+  width: 14px;
+  height: 14px;
+  margin: 3px;
+}
+.bg-empty .bg-inner-tile .bg-inner-inner-tile {
   background-color: #303a21;
   width: 8px;
   height: 8px;

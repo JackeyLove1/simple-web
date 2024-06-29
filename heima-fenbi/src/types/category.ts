@@ -26,3 +26,10 @@ export type CategoryChildItem = {
   /** 二级分类图片 */
   picture: string
 }
+
+export type FunctionItem = {
+  id: string,
+  title: string,
+  subTitle: string,
+  picture: string
+}

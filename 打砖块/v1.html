@@ -1,10 +1,366 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>8-Bit Shooter</title>
+    <style>
+        body {
+            background-color: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        canvas {
+            image-rendering: pixelated;
+        }
+    </style>
 </head>
 <body>
-$END$
+<canvas id="gameCanvas" width="256" height="240"></canvas>
+<script>
+    // 获取画布和上下文
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // 设置画布缩放
+    canvas.style.width = `${256 * 2}px`;
+    canvas.style.height = `${240 * 2}px`;
+
+    // 游戏状态
+    let gameState = {
+        player: {
+            x: 128,
+            y: 220,
+            width: 16,
+            height: 16,
+            speed: 100,
+            lives: 3
+        },
+        bullets: [],
+        enemies: [],
+        boss: null,
+        stars: [],
+        score: 0,
+        level: 1,
+        gameOver: false,
+        lastShot: 0
+    };
+
+    // 8位调色板
+    const palette = [
+        '#000000', '#FFFFFF', '#880000', '#AAFFEE',
+        '#CC44CC', '#00CC55', '#0000AA', '#EEEE77',
+        '#DD8855', '#664400', '#FF7777', '#333333',
+        '#777777', '#AAFF66', '#0088FF', '#BBBBBB'
+    ];
+
+    // 生成星星
+    function generateStars() {
+        for (let i = 0; i < 50; i++) {
+            gameState.stars.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                size: Math.random() * 2 + 1
+            });
+        }
+    }
+
+    // 绘制星星
+    function drawStars() {
+        ctx.fillStyle = palette[1]; // 白色
+        gameState.stars.forEach(star => {
+            ctx.fillRect(star.x, star.y, star.size, star.size);
+        });
+    }
+
+    // 移动星星
+    function moveStars(dt) {
+        gameState.stars.forEach(star => {
+            star.y += 20 * dt;
+            if (star.y > canvas.height) {
+                star.y = 0;
+                star.x = Math.random() * canvas.width;
+            }
+        });
+    }
+
+    // 绘制玩家
+    function drawPlayer() {
+        ctx.fillStyle = palette[7]; // 黄色
+        ctx.fillRect(gameState.player.x, gameState.player.y, gameState.player.width, gameState.player.height);
+    }
+
+    // 移动玩家
+    function movePlayer(dt) {
+        if (keys.ArrowLeft && gameState.player.x > 0) {
+            gameState.player.x -= gameState.player.speed * dt;
+        }
+        if (keys.ArrowRight && gameState.player.x < canvas.width - gameState.player.width) {
+            gameState.player.x += gameState.player.speed * dt;
+        }
+    }
+
+    // 射击
+    function shoot() {
+        const now = Date.now();
+        if (now - gameState.lastShot > 100) { // 每10帧发射一次
+            gameState.bullets.push({
+                x: gameState.player.x + gameState.player.width / 2 - 2,
+                y: gameState.player.y,
+                width: 4,
+                height: 8,
+                speed: 200
+            });
+            gameState.lastShot = now;
+        }
+    }
+
+    // 绘制子弹
+    function drawBullets() {
+        ctx.fillStyle = palette[6]; // 蓝色
+        gameState.bullets.forEach(bullet => {
+            ctx.fillRect(bullet.x, bullet.y, bullet.width, bullet.height);
+        });
+    }
+
+    // 移动子弹
+    function moveBullets(dt) {
+        gameState.bullets = gameState.bullets.filter(bullet => {
+            bullet.y -= bullet.speed * dt;
+            return bullet.y + bullet.height > 0;
+        });
+    }
+
+    // 生成敌人
+    function generateEnemy() {
+        if (Math.random() < 0.02 * gameState.level) {
+            gameState.enemies.push({
+                x: Math.random() * (canvas.width - 20),
+                y: -20,
+                width: 20,
+                height: 20,
+                speed: 50 + gameState.level * 10,
+                health: 1 + Math.floor(gameState.level / 5)
+            });
+        }
+    }
+
+    // 绘制敌人
+    function drawEnemies() {
+        ctx.fillStyle = palette[2]; // 红色
+        gameState.enemies.forEach(enemy => {
+            ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
+        });
+    }
+
+    // 移动敌人
+    function moveEnemies(dt) {
+        gameState.enemies = gameState.enemies.filter(enemy => {
+            enemy.y += enemy.speed * dt;
+            return enemy.y < canvas.height;
+        });
+    }
+
+    // 检测碰撞
+    function checkCollisions() {
+        // 子弹和敌人的碰撞
+        gameState.bullets.forEach(bullet => {
+            gameState.enemies.forEach(enemy => {
+                if (bullet.x < enemy.x + enemy.width &&
+                    bullet.x + bullet.width > enemy.x &&
+                    bullet.y < enemy.y + enemy.height &&
+                    bullet.y + bullet.height > enemy.y) {
+                    enemy.health--;
+                    if (enemy.health <= 0) {
+                        gameState.score += 10;
+                        gameState.enemies = gameState.enemies.filter(e => e !== enemy);
+                    }
+                    gameState.bullets = gameState.bullets.filter(b => b !== bullet);
+                }
+            });
+        });
+
+        // 玩家和敌人的碰撞
+        gameState.enemies.forEach(enemy => {
+            if (gameState.player.x < enemy.x + enemy.width &&
+                gameState.player.x + gameState.player.width > enemy.x &&
+                gameState.player.y < enemy.y + enemy.height &&
+                gameState.player.y + gameState.player.height > enemy.y) {
+                gameState.player.lives--;
+                if (gameState.player.lives <= 0) {
+                    gameState.gameOver = true;
+                }
+                gameState.enemies = gameState.enemies.filter(e => e !== enemy);
+            }
+        });
+    }
+
+    // 生成Boss
+    function generateBoss() {
+        if (gameState.score % 100 === 0 && gameState.score > 0 && !gameState.boss) {
+            gameState.boss = {
+                x: canvas.width / 2 - 40,
+                y: 20,
+                width: 80,
+                height: 40,
+                speed: 50,
+                health: 50 + gameState.level * 10,
+                direction: 1
+            };
+        }
+    }
+
+    // 绘制Boss
+    function drawBoss() {
+        if (gameState.boss) {
+            ctx.fillStyle = palette[4]; // 紫色
+            ctx.fillRect(gameState.boss.x, gameState.boss.y, gameState.boss.width, gameState.boss.height);
+
+            // 绘制HP条
+            ctx.fillStyle = palette[5]; // 绿色
+            const hpWidth = (gameState.boss.health / (50 + gameState.level * 10)) * gameState.boss.width;
+            ctx.fillRect(gameState.boss.x, gameState.boss.y - 10, hpWidth, 5);
+        }
+    }
+
+    // 移动Boss
+    function moveBoss(dt) {
+        if (gameState.boss) {
+            gameState.boss.x += gameState.boss.speed * gameState.boss.direction * dt;
+            if (gameState.boss.x <= 0 || gameState.boss.x + gameState.boss.width >= canvas.width) {
+                gameState.boss.direction *= -1;
+            }
+
+            // Boss生成敌人
+            if (Math.random() < 0.05) {
+                gameState.enemies.push({
+                    x: gameState.boss.x + gameState.boss.width / 2 - 10,
+                    y: gameState.boss.y + gameState.boss.height,
+                    width: 20,
+                    height: 20,
+                    speed: 100,
+                    health: 1
+                });
+            }
+
+            // 检测子弹和Boss的碰撞
+            gameState.bullets.forEach(bullet => {
+                if (bullet.x < gameState.boss.x + gameState.boss.width &&
+                    bullet.x + bullet.width > gameState.boss.x &&
+                    bullet.y < gameState.boss.y + gameState.boss.height &&
+                    bullet.y + bullet.height > gameState.boss.y) {
+                    gameState.boss.health--;
+                    if (gameState.boss.health <= 0) {
+                        gameState.score += 100;
+                        gameState.boss = null;
+                    }
+                    gameState.bullets = gameState.bullets.filter(b => b !== bullet);
+                }
+            });
+        }
+    }
+
+    // 绘制UI
+    function drawUI() {
+        ctx.fillStyle = palette[1]; // 白色
+        ctx.font = '8px Arial';
+        ctx.fillText(`Score: ${gameState.score}`, 10, 20);
+        ctx.fillText(`Level: ${gameState.level}`, 10, 30);
+        ctx.fillText(`Lives: ${gameState.player.lives}`, 10, 40);
+    }
+
+    // 绘制游戏结束画面
+    function drawGameOver() {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = palette[1]; // 白色
+        ctx.font = '16px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2);
+        ctx.font = '8px Arial';
+        ctx.fillText('Press SPACE to restart', canvas.width / 2, canvas.height / 2 + 20);
+    }
+
+    // 重置游戏
+    function resetGame() {
+        gameState = {
+            player: {
+                x: 128,
+                y: 220,
+                width: 16,
+                height: 16,
+                speed: 100,
+                lives: 3
+            },
+            bullets: [],
+            enemies: [],
+            boss: null,
+            stars: [],
+            score: 0,
+            level: 1,
+            gameOver: false,
+            lastShot: 0
+        };
+        generateStars();
+    }
+
+    // 键盘输入处理
+    const keys = {};
+    window.addEventListener('keydown', e => keys[e.code] = true);
+    window.addEventListener('keyup', e => keys[e.code] = false);
+
+    // 游戏循环
+    let lastTime = 0;
+    function gameLoop(timestamp) {
+        const dt = (timestamp - lastTime) / 1000;
+        lastTime = timestamp;
+
+        if (!gameState.gameOver) {
+            ctx.fillStyle = palette[0]; // 黑色背景
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            moveStars(dt);
+            drawStars();
+
+            movePlayer(dt);
+            drawPlayer();
+
+            shoot();
+            moveBullets(dt);
+            drawBullets();
+
+            generateEnemy();
+            moveEnemies(dt);
+            drawEnemies();
+
+            generateBoss();
+            moveBoss(dt);
+            drawBoss();
+
+            checkCollisions();
+            drawUI();
+
+            // 升级
+            if (gameState.score > gameState.level * 100) {
+                gameState.level++;
+            }
+        } else {
+            drawGameOver();
+            if (keys.Space) {
+                resetGame();
+            }
+        }
+
+        requestAnimationFrame(gameLoop);
+    }
+
+    // 开始游戏
+    generateStars();
+    requestAnimationFrame(gameLoop);
+</script>
 </body>
 </html>

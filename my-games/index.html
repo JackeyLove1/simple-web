@@ -1,10 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <title>Jacky'sGamePlayGround</title>
+    <link rel="icon" href="public/favicon.png" type="image/png">
 </head>
+<style>
+    #vanta-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+    .text-overlay {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: #ffffff; /* Adjust for visibility */
+        font-size: 3rem; /* Adjust size as needed */
+        text-align: center;
+        font-family: 'Arial', sans-serif; /* Choose an appropriate font */
+        text-shadow: 0 0 10px rgba(0, 0, 0, 0.7); /* Soft shadow for depth */
+        opacity: 0.8; /* Adjust for blending effect */
+        transition: opacity 0.3s ease-in-out;
+    }
+
+    /* Optional: Add interaction effect */
+    .text-overlay:hover {
+        opacity: 1;
+    }
+
+    li{
+        list-style: none;
+        a{
+            text-decoration: none;
+        }
+        a:hover{
+            color: #fff;
+        }
+    }
+
+</style>
 <body>
-$END$
+<div id="vanta-bg"></div>
+<div class="text-overlay">
+    Let's Start !
+    <ul>
+        <li>
+            <a href="./2048/index.html" target="_blank"> 2048 </a>
+        </li>
+        <li>
+            <a href="./扫雷/index.html" target="_blank"> 扫雷 </a>
+        </li>
+        <li>
+            <a href="./俄罗斯方块/index.html" target="_blank">俄罗斯方块</a>
+        </li>
+    </ul>
+</div>
 </body>
 </html>
+<script src="./lib/three.min.js"></script>
+<script src="./lib/vanta.birds.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        // Initialize Vanta.js BIRDS effect
+        VANTA.BIRDS({
+            el: "#vanta-bg",
+            mouseControls: true,
+            touchControls: true,
+            minHeight: 200.00,
+            minWidth: 200.00,
+            scale: 1.00,
+            scaleMobile: 1.00,
+            backgroundColor: 0x0, // Background color
+            color1: 0xfffff, // Color of the birds
+            color2: 0x111111, // Color of the birds
+            wingSpan: 0.5, // Wing span of the birds
+            separation: 10.00, // Separation between birds
+            alignment: 10.00, // Alignment between birds
+            cohesion: 190.00, // Cohesion in bird movement
+            quantity: 5.0 // Quantity of birds
+            // ... other parameters ...
+        });
+
+        // Add event listeners for mouseover and mouseout
+        document.querySelector('.text-overlay').addEventListener('mouseover', function() {
+            this.style.color = '#aqua'; // Change to a different color
+        });
+
+        document.querySelector('.text-overlay').addEventListener('mouseout', function() {
+            this.style.color = '#ffffff'; // Change back to the original color
+        });
+    });
+</script>

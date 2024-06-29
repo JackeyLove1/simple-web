@@ -1,10 +1,223 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>8位风格自动射击飞行游戏</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: black;
+            color: white;
+            font-family: 'Press Start 2P', cursive;
+        }
+        canvas {
+            image-rendering: pixelated;
+        }
+        #info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+    </style>
 </head>
 <body>
-$END$
+<canvas id="gameCanvas" width="256" height="240"></canvas>
+<div id="info"></div>
+
+<script>
+    // 获取画布及其上下文
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // 游戏状态
+    let score = 0;
+    let level = 1;
+    let playerLives = 3;
+    let isGameOver = false;
+
+    // 玩家飞机
+    const player = {
+        x: canvas.width / 2 - 8,
+        y: canvas.height - 32,
+        width: 16,
+        height: 16,
+        speed: 2,
+        bullets: [],
+        shoot() {
+            this.bullets.push({ x: this.x + 8, y: this.y, width: 2, height: 8 });
+        }
+    };
+
+    // 敌人和Boss
+    const enemies = [];
+    const boss = {
+        x: 0,
+        y: 0,
+        width: 32,
+        height: 16,
+        hp: 100,
+        isActive: false
+    };
+
+    // 闪耀的星星
+    const stars = Array.from({ length: 50 }, () => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        size: Math.random() * 2,
+        speed: Math.random() * 0.5 + 0.5
+    }));
+
+    // 键盘控制
+    const keys = {};
+    document.addEventListener('keydown', (e) => {
+        keys[e.key] = true;
+    });
+    document.addEventListener('keyup', (e) => {
+        keys[e.key] = false;
+    });
+
+    // 动画循环
+    function gameLoop(timestamp) {
+        if (isGameOver) {
+            ctx.fillStyle = 'white';
+            ctx.font = '16px Arial';
+            ctx.fillText('Game Over', canvas.width / 2 - 40, canvas.height / 2);
+            ctx.fillText('Press R to Restart', canvas.width / 2 - 60, canvas.height / 2 + 20);
+            if (keys['r']) {
+                restartGame();
+            }
+            return;
+        }
+
+        // 清除画布
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // 绘制星星
+        ctx.fillStyle = 'white';
+        stars.forEach(star => {
+            ctx.fillRect(star.x, star.y, star.size, star.size);
+            star.y += star.speed;
+            if (star.y > canvas.height) star.y = 0;
+        });
+
+        // 绘制玩家飞机
+        ctx.fillStyle = 'blue';
+        ctx.fillRect(player.x, player.y, player.width, player.height);
+
+        // 移动玩家
+        if (keys['ArrowLeft'] && player.x > 0) player.x -= player.speed;
+        if (keys['ArrowRight'] && player.x < canvas.width - player.width) player.x += player.speed;
+
+        // 玩家自动发射子弹
+        if (timestamp % 10 < 1) player.shoot();
+
+        // 绘制子弹
+        player.bullets.forEach((bullet, index) => {
+            ctx.fillStyle = 'red';
+            ctx.fillRect(bullet.x, bullet.y, bullet.width, bullet.height);
+            bullet.y -= 2;
+            if (bullet.y < 0) player.bullets.splice(index, 1);
+        });
+
+        // 生成敌人
+        if (timestamp % 100 < 1 && !boss.isActive) {
+            enemies.push({
+                x: Math.random() * (canvas.width - 16),
+                y: 0,
+                width: 16,
+                height: 16,
+                speed: 1 + level * 0.1
+            });
+        }
+
+        // 绘制敌人
+        ctx.fillStyle = 'green';
+        enemies.forEach((enemy, index) => {
+            ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
+            enemy.y += enemy.speed;
+
+            // 检测敌人和子弹的碰撞
+            player.bullets.forEach((bullet, bulletIndex) => {
+                if (bullet.x < enemy.x + enemy.width &&
+                    bullet.x + bullet.width > enemy.x &&
+                    bullet.y < enemy.y + enemy.height &&
+                    bullet.y + bullet.height > enemy.y) {
+                    player.bullets.splice(bulletIndex, 1);
+                    enemies.splice(index, 1);
+                    score += 10;
+                    if (score % 100 === 0) {
+                        level++;
+                        boss.isActive = true;
+                        boss.hp = 100 + level * 20;
+                    }
+                }
+            });
+
+            // 检测敌人和玩家的碰撞
+            if (enemy.x < player.x + player.width &&
+                enemy.x + enemy.width > player.x &&
+                enemy.y < player.y + player.height &&
+                enemy.y + enemy.height > player.y) {
+                enemies.splice(index, 1);
+                playerLives--;
+                if (playerLives <= 0) {
+                    isGameOver = true;
+                }
+            }
+        });
+
+        // 绘制Boss
+        if (boss.isActive) {
+            ctx.fillStyle = 'purple';
+            ctx.fillRect(boss.x, boss.y, boss.width, boss.height);
+
+            // Boss移动
+            boss.x += boss.speed;
+            if (boss.x < 0 || boss.x > canvas.width - boss.width) boss.speed *= -1;
+
+            // 检测Boss和子弹的碰撞
+            player.bullets.forEach((bullet, bulletIndex) => {
+                if (bullet.x < boss.x + boss.width &&
+                    bullet.x + bullet.width > boss.x &&
+                    bullet.y < boss.y + boss.height &&
+                    bullet.y + bullet.height > boss.y) {
+                    player.bullets.splice(bulletIndex, 1);
+                    boss.hp -= 10;
+                    if (boss.hp <= 0) {
+                        boss.isActive = false;
+                        score += 100;
+                    }
+                }
+            });
+        }
+
+        // 更新信息
+        document.getElementById('info').textContent = `Score: ${score} Level: ${level} Lives: ${playerLives}`;
+
+        // 请求下一帧
+        requestAnimationFrame(gameLoop);
+    }
+
+    // 重新开始游戏
+    function restartGame() {
+        score = 0;
+        level = 1;
+        playerLives = 3;
+        player.x = canvas.width / 2 - 8;
+        player.y = canvas.height - 32;
+        player.bullets = [];
+        enemies.length = 0;
+        boss.isActive = false;
+        isGameOver = false;
+        requestAnimationFrame(gameLoop);
+    }
+
+    // 初始化游戏
+    requestAnimationFrame(gameLoop);
+</script>
 </body>
 </html>

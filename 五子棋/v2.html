@@ -1,10 +1,166 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>五子棋游戏</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        #game-container {
+            text-align: center;
+        }
+
+        #board {
+            display: grid;
+            grid-template-columns: repeat(15, 30px);
+            grid-template-rows: repeat(15, 30px);
+            gap: 1px;
+            background-color: #d2b48c; /* 浅木色背景 */
+            padding: 10px;
+            border: 2px solid #8b4513;
+        }
+
+        .cell {
+            width: 30px;
+            height: 30px;
+            background-color: transparent;
+            border: 1px solid #8b4513;
+            cursor: pointer;
+        }
+
+        .cell::before {
+            content: '';
+            display: block;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            margin: 2px;
+        }
+
+        .cell.black::before {
+            background-color: black;
+        }
+
+        .cell.white::before {
+            background-color: white;
+        }
+
+        #status {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        #restart {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
-$END$
+<div id="game-container">
+    <h1>五子棋</h1>
+    <div id="board"></div>
+    <div id="status"></div>
+    <button id="restart">重新开始</button>
+</div>
+<script>
+    const board = document.getElementById('board');
+    const status = document.getElementById('status');
+    const restartButton = document.getElementById('restart');
+
+    const BOARD_SIZE = 15;
+    const WIN_CONDITION = 5;
+
+    let currentPlayer = 'black';
+    let gameBoard = [];
+
+    function initializeBoard() {
+        gameBoard = Array(BOARD_SIZE).fill().map(() => Array(BOARD_SIZE).fill(null));
+        board.innerHTML = '';
+        for (let i = 0; i < BOARD_SIZE; i++) {
+            for (let j = 0; j < BOARD_SIZE; j++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.dataset.row = i;
+                cell.dataset.col = j;
+                cell.addEventListener('click', handleCellClick);
+                board.appendChild(cell);
+            }
+        }
+        currentPlayer = 'black';
+        status.textContent = '黑子回合';
+    }
+
+    function handleCellClick(event) {
+        const row = parseInt(event.target.dataset.row);
+        const col = parseInt(event.target.dataset.col);
+
+        if (gameBoard[row][col] || checkWinner()) return;
+
+        gameBoard[row][col] = currentPlayer;
+        event.target.classList.add(currentPlayer);
+
+        if (checkWinner()) {
+            status.textContent = `${currentPlayer === 'black' ? '黑子' : '白子'}胜利！`;
+        } else {
+            currentPlayer = currentPlayer === 'black' ? 'white' : 'black';
+            status.textContent = `${currentPlayer === 'black' ? '黑子' : '白子'}回合`;
+        }
+    }
+
+    function checkWinner() {
+        const directions = [
+            [0, 1],  // 水平
+            [1, 0],  // 垂直
+            [1, 1],  // 对角线
+            [1, -1]  // 反对角线
+        ];
+
+        for (let row = 0; row < BOARD_SIZE; row++) {
+            for (let col = 0; col < BOARD_SIZE; col++) {
+                if (gameBoard[row][col]) {
+                    for (const [dx, dy] of directions) {
+                        if (checkLine(row, col, dx, dy)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    function checkLine(row, col, dx, dy) {
+        const player = gameBoard[row][col];
+        for (let i = 1; i < WIN_CONDITION; i++) {
+            const newRow = row + i * dx;
+            const newCol = col + i * dy;
+            if (
+                newRow < 0 || newRow >= BOARD_SIZE ||
+                newCol < 0 || newCol >= BOARD_SIZE ||
+                gameBoard[newRow][newCol] !== player
+            ) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    restartButton.addEventListener('click', initializeBoard);
+
+    initializeBoard();
+</script>
 </body>
 </html>

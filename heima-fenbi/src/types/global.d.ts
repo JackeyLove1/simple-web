@@ -25,3 +25,24 @@ export type PageParams = {
 // src/types/global.d.ts
 /** 通用商品类型 */
 export type GoodsItem = GuessItem
+
+export interface CardItem {
+  /** 卡片标题 */
+  title: string
+  /** 卡片描述 */
+  desc: string
+  /** 卡片图片 */
+  image: string
+}
+
+export interface PracticeItem {
+  /** 类型 **/
+  title: string,
+  /** 题目数量 **/
+  number: string,
+  /** 描述 **/
+  desc?: string,
+  /** 图标 **/
+  avatar: string,
+}
+

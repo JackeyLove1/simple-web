@@ -10,6 +10,8 @@ import HotPanel from "@/pages/index/components/HotPanel.vue";
 import XtxGuess from "@/components/XtxGuess.vue";
 import type {XtxGuessInstance} from "@/components/components";
 import PageSkeleton from "@/pages/index/PageSkeleton.vue";
+import QuestionCategory from "@/pages/index/components/QuestionCategory.vue";
+import FunctionPanel from "@/pages/index/components/FunctionPanel.vue";
 
 const bannerList = ref<BannerItem[]>([])
 const getHomeBannerData = async () => {
@@ -84,14 +86,19 @@ const onScrollToLower = async () => {
       <!-- 轮播图组件 -->
       <XtxSwiper :list="bannerList"/>
 
+      <!-- 功能组件 -->
+      <FunctionPanel />
+
+      <!-- 题目分类 -->
+      <QuestionCategory />
       <!-- 首页分类组件 -->
-      <CategoryPanel :list="categoryList"/>
+      <!--CategoryPanel :list="categoryList"/-->
 
       <!-- 推荐导航栏 -->
-      <HotPanel :list="hoList"/>
+      <!--HotPanel :list="hoList"/-->
 
       <!-- 猜你喜欢 -->
-      <XtxGuess ref="guessLikeRef"/>
+      <!--XtxGuess ref="guessLikeRef"/-->
     </template>
 
   </scroll-view>
@@ -104,7 +111,6 @@ page {
   height: 100%;
   display: flex;
   flex-direction: column;
-
   .scroll-view {
     flex: 1;
   }
