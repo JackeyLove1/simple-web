@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>24 Point Game</title>
+</head>
+<link href="../lib/full.min.css" rel="stylesheet" type="text/css"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+    .container {
+        display: flex;
+        height: 100px;
+        justify-content: center;
+    }
+
+    header {
+        height: 100%;
+        width: 100px;
+    }
+
+    main {
+        height: 100px;
+        margin: auto auto;
+    }
+</style>
+<body>
+<div class="container">
+    <header>
+        <div class="stats stats-vertical shadow">
+            <div class="stat">
+                <div class="stat-title">当前耗时</div>
+                <div class="stat-value" id="cost">0</div>
+            </div>
+            <div class="stat">
+                <div class="stat-title">历史最佳</div>
+                <div class="stat-value" id="best-cost">9999</div>
+            </div>
+            <div class="stat">
+                <div class="stat-title">已解决问题</div>
+                <div class="stat-value" id="total">0</div>
+            </div>
+        </div>
+    </header>
+    <main>
+        <div class="card-body">
+            <h2 class="card-title">24点挑战</h2>
+            <p class="text-sm">例如：(3+3)*(4-2)</p>
+            <div class="flex flex-row justify-between">
+                <kbd class="kbd" id="card1">1</kbd>
+                <kbd class="kbd" id="card2">2</kbd>
+                <kbd class="kbd" id="card3">3</kbd>
+                <kbd class="kbd" id="card4">4</kbd>
+            </div>
+            <input id="expression" type="text" placeholder="请输入表达式" class="input input-bordered w-full max-w-xs"/>
+            <div class="flex flex-row justify-between">
+                <button id="submitButton" type="button" class="btn btn-outline btn-primary" onclick="checkExpression()">提交</button>
+                <button type="button" class="btn btn-outline btn-accent" onclick="generateCards()"> 下一题</button>
+            </div>
+        </div>
+    </main>
+
+    <dialog id="modal-success" class="modal">
+        <div class="modal-box">
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+            </form>
+            <h3 class="text-lg font-bold">恭喜!</h3>
+            <p class="py-4">您已成功解决该问题</p>
+        </div>
+    </dialog>
+
+    <dialog id="modal-fail" class="modal">
+        <div class="modal-box">
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+            </form>
+            <h3 class="text-lg font-bold">很遗憾!</h3>
+            <p class="py-4">就差一点点就成功了</p>
+        </div>
+    </dialog>
+</div>
+</body>
+</html>
+
+<script>
+    const ScoreKey = "24PointGame-Score"
+    const TotalKey = "24PointGame-Total"
+
+    const success = document.getElementById("modal-success")
+    const fail = document.getElementById("modal-fail")
+    let cards = []
+    let timer = 0
+
+    function startTimer() {
+        startTime = Date.now()
+        timer = setInterval(() => {
+            let cost = document.getElementById('cost')
+            cost.innerText = Math.floor((Date.now() - startTime) / 1000)
+        }, 1000)
+    }
+
+    function clearTimer() {
+        clearInterval(timer)
+        document.getElementById("cost").innerText = 0
+    }
+
+    function clearInput() {
+        document.getElementById('expression').value = ''
+    }
+
+    function getScore() {
+        let score = localStorage.getItem(ScoreKey) || 9999
+        document.getElementById('best-cost').innerText = score
+    }
+
+    function updateScore() {
+        let currentScore = parseInt(document.getElementById('cost').innerText)
+        let bestScore = localStorage.getItem(ScoreKey) || 9999
+        if (currentScore < bestScore) {
+            localStorage.setItem(ScoreKey, currentScore)
+            document.getElementById('best-cost').innerText = currentScore
+        }
+    }
+
+    function getTotal() {
+        let total = localStorage.getItem(TotalKey) || 0
+        document.getElementById('total').innerText = total
+    }
+
+    function updateTotal() {
+        let total = localStorage.getItem(TotalKey) || 0
+        let newTotal = parseInt(total) + 1
+        localStorage.setItem(TotalKey, newTotal)
+        document.getElementById('total').innerText = newTotal
+    }
+
+    function generateCards() {
+        cards = [generateRandomCard(), generateRandomCard(), generateRandomCard(), generateRandomCard()]
+        document.getElementById('card1').innerText = cards[0]
+        document.getElementById('card2').innerText = cards[1]
+        document.getElementById('card3').innerText = cards[2]
+        document.getElementById('card4').innerText = cards[3]
+    }
+
+    function generateRandomCard() {
+        startTimer()
+        return Math.floor((Math.random() * 9) + 1)
+    }
+
+    function isExpressionValida(expression) {
+        try {
+            const numbersInExpressionList = expression.match(/\d+/g).map(Number)
+            numbersInExpressionList.sort()
+            cards.sort()
+            return !!(numbersInExpressionList && cards.length === numbersInExpressionList.length && cards.every((card, index) => card === numbersInExpressionList[index]));
+        } catch (e) {
+            console.log("isExpressionValid error: ", e)
+            return false
+        }
+
+    }
+
+    function checkExpression() {
+        const expression = document.getElementById("expression").value
+        console.log("expression: ", expression)
+        try {
+            const result = eval(expression)
+            if (result === 24 && isExpressionValida(expression)) {
+                updateTotal()
+                updateScore()
+                generateCards()
+                clearInput()
+                success.showModal()
+                return
+            }
+            fail.showModal()
+        } catch (e) {
+            console.log(e)
+            fail.showModal()
+        } finally {
+            clearTimer()
+            clearInput()
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', (event) => {
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                checkExpression();
+            }
+        });
+
+    })
+
+    generateCards()
+    getScore()
+    getTotal()
+
+</script>
